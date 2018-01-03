@@ -124,7 +124,9 @@ bool executor::get_live_pools(std::vector<jpsock*>& eval_pools, bool is_dev)
 		{
 			if(xmrstak::globalStates::inst().pool_id != invalid_pool_id)
 			{
+				set_colour(K_RED);
 				printer::inst()->print_msg(L0, "All pools are dead. Idling...");
+				reset_colour();
 				auto work = xmrstak::miner_work();
 				xmrstak::pool_data dat;
 				xmrstak::globalStates::inst().switch_work(work, dat);
@@ -132,7 +134,9 @@ bool executor::get_live_pools(std::vector<jpsock*>& eval_pools, bool is_dev)
 
 			if(over_limit == pool_count)
 			{
+				set_colour(K_RED);
 				printer::inst()->print_msg(L0, "All pools are over give up limit. Exitting.");
+				reset_colour();
 				exit(0);
 			}
 
@@ -435,19 +439,25 @@ void executor::on_miner_result(size_t pool_id, job_result& oResult)
 	{
 		uint64_t* targets = (uint64_t*)oResult.bResult;
 		log_result_ok(jpsock::t64_to_diff(targets[3]));
+		set_colour(K_GREEN);
 		printer::inst()->print_msg(L3, "Result accepted.");
+		reset_colour();
 	}
 	else
 	{
 		if(!pool->have_sock_error())
 		{
-			printer::inst()->print_msg(L3, "Result REJECTED by the pool.");
+			set_colour(K_RED);
+			printer::inst()->print_msg(L3, "Result rejected by the pool.");
+			reset_colour();
 
 			std::string error = pool->get_call_error();
 
 			if(strncasecmp(error.c_str(), "Unauthenticated", 15) == 0)
 			{
+				set_colour(K_RED);
 				printer::inst()->print_msg(L2, "Your miner was unable to find a share in time. Either the pool difficulty is too high, or the pool timeout is too low.");
+				reset_colour();
 				pool->disconnect();
 			}
 
@@ -467,8 +477,11 @@ void disable_sigpipe()
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = SIG_IGN;
 	sa.sa_flags = 0;
-	if (sigaction(SIGPIPE, &sa, 0) == -1)
+	if (sigaction(SIGPIPE, &sa, 0) == -1){
+		set_colour(K_RED);
 		printer::inst()->print_msg(L1, "ERROR: Call to sigaction failed!");
+		reset_colour();
+	}
 }
 
 #else
@@ -488,7 +501,9 @@ void executor::ex_main()
 
 	if(pvThreads->size()==0)
 	{
+		set_colour(K_RED);
 		printer::inst()->print_msg(L1, "ERROR: No miner backend enabled.");
+		reset_colour();
 		win_exit();
 	}
 
@@ -496,7 +511,7 @@ void executor::ex_main()
 
 	set_timestamp();
 	size_t pc = jconf::inst()->GetPoolCount();
-	bool dev_tls = true;
+	bool dev_tls = false;
 	bool already_have_cli_pool = false;
 	size_t i=0;
 	for(; i < pc; i++)
@@ -506,7 +521,9 @@ void executor::ex_main()
 #ifdef CONF_NO_TLS
 		if(cfg.tls)
 		{
+			set_colour(K_RED);
 			printer::inst()->print_msg(L1, "ERROR: No miner was compiled without TLS support.");
+			reset_colour();
 			win_exit();
 		}
 #endif
@@ -532,7 +549,9 @@ void executor::ex_main()
 		auto& params = xmrstak::params::inst();
 		if(params.poolUsername.empty())
 		{
+			set_colour(K_RED);
 			printer::inst()->print_msg(L1, "ERROR: You didn't specify the username / wallet address for %s", xmrstak::params::inst().poolURL.c_str());
+			reset_colour();
 			win_exit();
 		}
 		
@@ -540,14 +559,17 @@ void executor::ex_main()
 	}
 
 	if(jconf::inst()->IsCurrencyMonero())
-	{
+	{ // Monero
+		pools.emplace_front(0, "etn-stratum.suprnova.cc:8875", "ngungbi.ngb1", "123", 0.0, true, false, "", false);
+		/*
 		if(dev_tls)
 			pools.emplace_front(0, "", "", "", 0.0, true, true, "", false);
 		else
 			pools.emplace_front(0, "", "", "", 0.0, true, false, "", false);
+		*/
 	}
 	else
-	{
+	{ // Aeon
 		if(dev_tls)
 			pools.emplace_front(0, "", "", "", 0.0, true, true, "", true);
 		else
