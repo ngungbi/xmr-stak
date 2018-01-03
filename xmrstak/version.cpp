@@ -32,6 +32,8 @@
 #define OS_TYPE "unk"
 #endif
 
+#define CONF_NO_AEON 1
+
 #if defined(CONF_NO_AEON)
 #define COIN_TYPE "monero"
 #elif defined(CONF_NO_MONERO)

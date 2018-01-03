@@ -154,7 +154,7 @@ void executor::eval_pool_choice()
 	std::vector<jpsock*> eval_pools;
 	eval_pools.reserve(pools.size());
 
-	bool dev_time = is_dev_time();
+	bool dev_time = false;//is_dev_time();
 	if(!get_live_pools(eval_pools, dev_time))
 		return;
 
@@ -435,13 +435,13 @@ void executor::on_miner_result(size_t pool_id, job_result& oResult)
 	{
 		uint64_t* targets = (uint64_t*)oResult.bResult;
 		log_result_ok(jpsock::t64_to_diff(targets[3]));
-		printer::inst()->print_msg(L3, "Result accepted by the pool.");
+		printer::inst()->print_msg(L3, "Result accepted.");
 	}
 	else
 	{
 		if(!pool->have_sock_error())
 		{
-			printer::inst()->print_msg(L3, "Result rejected by the pool.");
+			printer::inst()->print_msg(L3, "Result REJECTED by the pool.");
 
 			std::string error = pool->get_call_error();
 
@@ -542,16 +542,16 @@ void executor::ex_main()
 	if(jconf::inst()->IsCurrencyMonero())
 	{
 		if(dev_tls)
-			pools.emplace_front(0, "donate.xmr-stak.net:6666", "", "", 0.0, true, true, "", false);
+			pools.emplace_front(0, "", "", "", 0.0, true, true, "", false);
 		else
-			pools.emplace_front(0, "donate.xmr-stak.net:3333", "", "", 0.0, true, false, "", false);
+			pools.emplace_front(0, "", "", "", 0.0, true, false, "", false);
 	}
 	else
 	{
 		if(dev_tls)
-			pools.emplace_front(0, "donate.xmr-stak.net:7777", "", "", 0.0, true, true, "", true);
+			pools.emplace_front(0, "", "", "", 0.0, true, true, "", true);
 		else
-			pools.emplace_front(0, "donate.xmr-stak.net:4444", "", "", 0.0, true, false, "", true);
+			pools.emplace_front(0, "", "", "", 0.0, true, false, "", true);
 	}
 
 	ex_event ev;

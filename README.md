@@ -1,3 +1,5 @@
+This is a forked version, customized for my machine, not recommended to use
+
 ###### fireice-uk's and psychocrypt's
 # XMR-Stak - Monero/Aeon All-in-One Mining Software
 
