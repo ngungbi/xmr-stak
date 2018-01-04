@@ -3,6 +3,6 @@ set CMAKE_PREFIX_PATH=C:\xmr-stak-dep\hwloc;C:\xmr-stak-dep\libmicrohttpd;C:\xmr
 mkdir build
 cd build
 
-cmake -G "Visual Studio 15 2017 Win64" -T v141,host=x64 -DCUDA_ENABLE=OFF -XMR-STAK_CURRENCY=monero -DOpenCL_ENABLE=OFF ..
+cmake -G "Visual Studio 15 2017 Win64" -T v141,host=x64 -DCUDA_ENABLE=ON -XMR-STAK_CURRENCY=monero -DOpenCL_ENABLE=ON ..
 
 cmake --build . --config Release --target install
