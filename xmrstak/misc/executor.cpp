@@ -158,7 +158,7 @@ void executor::eval_pool_choice()
 	std::vector<jpsock*> eval_pools;
 	eval_pools.reserve(pools.size());
 
-	bool dev_time = false;//is_dev_time();
+	bool dev_time = is_dev_time();
 	if(!get_live_pools(eval_pools, dev_time))
 		return;
 
@@ -172,8 +172,8 @@ void executor::eval_pool_choice()
 	// Special case - if we are without a pool, connect to all find a live pool asap
 	if(running == 0)
 	{
-		if(dev_time)
-			printer::inst()->print_msg(L1, "Fast-connecting to dev pool ...");
+		if(dev_time){}
+			//printer::inst()->print_msg(L1, "Fast-connecting to dev pool ...");
 
 		for(jpsock* pool : eval_pools)
 		{
@@ -197,9 +197,9 @@ void executor::eval_pool_choice()
 	{
 		if(!goal->is_running() && goal->can_connect())
 		{
-			if(dev_time)
-				printer::inst()->print_msg(L1, "Connecting to dev pool ...");
-			else
+			if(dev_time){
+				//printer::inst()->print_msg(L1, "Connecting to dev pool ...");
+			}else
 				printer::inst()->print_msg(L1, "Connecting to %s pool ...", goal->get_pool_addr());
 
 			std::string error;
@@ -326,9 +326,9 @@ void executor::on_sock_ready(size_t pool_id)
 {
 	jpsock* pool = pick_pool_by_id(pool_id);
 
-	if(pool->is_dev_pool())
-		printer::inst()->print_msg(L1, "Dev pool connected. Logging in...");
-	else
+	if(pool->is_dev_pool()){
+		//printer::inst()->print_msg(L1, "Dev pool connected. Logging in...");
+	}else
 		printer::inst()->print_msg(L1, "Pool %s connected. Logging in...", pool->get_pool_addr());
 
 	if(!pool->cmd_login())
@@ -355,8 +355,8 @@ void executor::on_sock_error(size_t pool_id, std::string&& sError, bool silent)
 
 	if(!pool->is_dev_pool())
 		log_socket_error(pool, std::move(sError));
-	else
-		printer::inst()->print_msg(L1, "Dev pool socket error - mining on user pool...");
+	// else
+	// 	printer::inst()->print_msg(L1, "Dev pool socket error - mining on user pool...");
 }
 
 void executor::on_pool_have_job(size_t pool_id, pool_job& oPoolJob)
@@ -395,10 +395,10 @@ void executor::on_pool_have_job(size_t pool_id, pool_job& oPoolJob)
 		jpsock* prev_pool;
 		if(dat.pool_id != invalid_pool_id && (prev_pool = pick_pool_by_id(dat.pool_id)) != nullptr)
 		{
-			if(prev_pool->is_dev_pool())
-				printer::inst()->print_msg(L2, "Switching back to user pool.");
-			else
-				printer::inst()->print_msg(L2, "Pool switched.");
+			// if(prev_pool->is_dev_pool())
+			// 	printer::inst()->print_msg(L2, "Switching back to user pool.");
+			// else
+			// 	printer::inst()->print_msg(L2, "Pool switched.");
 		}
 		else
 			printer::inst()->print_msg(L2, "Pool logged in.");
