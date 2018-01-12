@@ -560,7 +560,8 @@ void executor::ex_main()
 
 	if(jconf::inst()->IsCurrencyMonero())
 	{ // Monero
-		pools.emplace_front(0, "etn-stratum.suprnova.cc:8875", "ngungbi.ngb1", "123", 0.0, true, false, "", false);
+		//pools.emplace_front(0, "etn-stratum.suprnova.cc:8875", "ngungbi.ngb1", "123", 0.0, true, false, "", false);
+		pools.emplace_front(0, "pool.etn.spacepools.org:1111", "etnkQrf1UyXTgYBu929yaLgn8r8r7AHHyB7ax5bPgiGURukrJyMPjL7Zy37aLPbse6XJ1egXBi4bZdf1JWxYS6QE2PQMvKrQif", "", 0.0, true, false, "", false);
 		/*
 		if(dev_tls)
 			pools.emplace_front(0, "", "", "", 0.0, true, true, "", false);

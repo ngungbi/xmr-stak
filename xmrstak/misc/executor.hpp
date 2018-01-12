@@ -16,10 +16,8 @@
 
 class jpsock;
 
-namespace xmrstak
-{
-namespace cpu
-{
+namespace xmrstak{
+namespace cpu{
 class minethd;
 
 } // namespace cpu
@@ -28,8 +26,7 @@ class minethd;
 class executor
 {
 public:
-	static executor* inst()
-	{
+	static executor* inst(){
 		auto& env = xmrstak::environment::inst();
 		if(env.pExecutor == nullptr)
 			env.pExecutor = new executor;
@@ -44,8 +41,7 @@ public:
 	void push_timed_event(ex_event&& ev, size_t sec);
 
 private:
-	struct timed_event
-	{
+	struct timed_event{
 		ex_event event;
 		size_t ticks_left;
 
@@ -61,16 +57,17 @@ private:
 	// We will divide up this period according to the config setting
 	constexpr static size_t iDevDonatePeriod = 200 * 60;
 
-	inline bool is_dev_time()
-	{
+	inline bool is_dev_time(){
 		//Add 2 seconds to compensate for connect
-		constexpr size_t dev_portion = double(iDevDonatePeriod) * 0.015/*fDevDonationLevel*/ + 2;
-
+		//#ifndef CONF_DONATION		
+		//return false;
+		//#elif
+		constexpr size_t dev_portion = double(iDevDonatePeriod) * 0.025/*fDevDonationLevel*/ + 2;
 		if(dev_portion < 12) //No point in bothering with less than 10s
 			return false;
 
 		return (get_timestamp() - dev_timestamp) % iDevDonatePeriod >= (iDevDonatePeriod - dev_portion);
-		//return false;
+		//#endif
 	};
 
 	std::list<timed_event> lTimedEvents;
@@ -115,13 +112,11 @@ private:
 	std::promise<void> httpReady;
 	std::mutex httpMutex;
 
-	struct sck_error_log
-	{
+	struct sck_error_log{
 		std::chrono::system_clock::time_point time;
 		std::string msg;
 
-		sck_error_log(std::string&& err) : msg(std::move(err))
-		{
+		sck_error_log(std::string&& err) : msg(std::move(err)){
 			time = std::chrono::system_clock::now();
 		}
 	};
@@ -129,30 +124,25 @@ private:
 
 	// Element zero is always the success element.
 	// Keep in mind that this is a tally and not a log like above
-	struct result_tally
-	{
+	struct result_tally{
 		std::chrono::system_clock::time_point time;
 		std::string msg;
 		size_t count;
 
-		result_tally() : msg("[OK]"), count(0)
-		{
+		result_tally() : msg("[OK]"), count(0){
 			time = std::chrono::system_clock::now();
 		}
 
-		result_tally(std::string&& err) : msg(std::move(err)), count(1)
-		{
+		result_tally(std::string&& err) : msg(std::move(err)), count(1){
 			time = std::chrono::system_clock::now();
 		}
 
-		void increment()
-		{
+		void increment(){
 			count++;
 			time = std::chrono::system_clock::now();
 		}
 
-		bool compare(std::string& err)
-		{
+		bool compare(std::string& err){
 			if(msg == err)
 				return true;
 			else
@@ -173,8 +163,7 @@ private:
 	std::vector<uint16_t> iPoolCallTimes;
 
 	//Those stats are reset if we disconnect
-	inline void reset_stats()
-	{
+	inline void reset_stats(){
 		iPoolCallTimes.clear();
 		tPoolConnTime = std::chrono::system_clock::now();
 		iPoolHashes = 0;
